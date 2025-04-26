@@ -12,7 +12,7 @@
     #game-area { display: none; }
     #search-box { margin-bottom: 15px; }
     .word-list-container { 
-      max-height: 400px; 
+      max-height: 224px; 
       overflow-y: auto;
       border: 1px solid #dee2e6;
       border-radius: 0.25rem;
@@ -62,7 +62,7 @@
     #options {
         display: flex;
         flex-direction: row;
-        justify-content: space-around;
+        justify-content: center;
         align-items: center;
     }
 
@@ -118,6 +118,11 @@
     }
 }
 
+@media (max-width: 768px) {
+    .btn-secondary {
+        width: 100%; 
+    }
+}
 
 @media (min-width: 769px) {
     .btn-primary {
@@ -174,6 +179,9 @@
         appearance: none;
     }
 }
+h3, h4, h5 {
+  text-align: center;
+}
   </style>
   <!-- Adicione esta linha para ativar a API de voz -->
 <script src="https://code.responsivevoice.org/responsivevoice.js?key=YOUR_API_KEY"></script>
@@ -185,7 +193,16 @@
 <body>
 
 <div class="container">
-  <h1 class="mb-4" style="text-align: center;">🧠 Jogo de Sinônimos</h1>
+  <h1 class="mb-4" style="text-align: center;">
+    🧠Sinônimos
+    <span>
+      <input class="form-check-input me-2" type="checkbox" id="auto-read">
+      <label class="form-check-label" for="auto-read">
+        🔊
+      </label>
+    </span>
+    
+  </h1>
   
   <div class="mb-3 bunn">
     <button class="btn btn-primary" onclick="startGame()">🎮 Iniciar Jogo</button>
@@ -196,12 +213,6 @@
       <option value="5">Difícil (5s)</option>
     </select>
     
-    <div class="form-check mb-2">
-      <input class="form-check-input" type="checkbox" id="auto-read">
-      <label class="form-check-label" for="auto-read">
-        Ler perguntas automaticamente
-      </label>
-    </div>
     
   </div>
 
@@ -209,9 +220,9 @@
     <div style="text-align: center;" id="word" class="h4 mb-3"></div>
     <div id="options" class="mb-3"></div>
     <div style="text-align: center;" id="result" class="mb-2"></div>
-    <button id="read-question" class="btn btn-sm btn-info mb-2" onclick="readCurrentQuestion()">🔊 Ler pergunta</button>
-    <div id="timer"></div>
-    <div id="score" class="mt-2"></div>
+    
+    <div style="text-align: center;" id="timer"></div>
+    <div style="text-align: center;" id="score" class="mt-2"></div>
     <button class="btn btn-secondary mt-2" onclick="nextWord()">Próxima</button>
   </div>
 
@@ -252,6 +263,7 @@
   <div class="mb-3">
     <input type="file" class="form-control mb-2" onchange="importFromJson(event)">
     <button class="btn btn-info" onclick="exportToJson()">Exportar JSON</button>
+    
   </div>
   
   
@@ -271,6 +283,7 @@
       </div>
     </div>
   </div>
+  <button id="read-question" class="btn btn-sm btn-info mb-2" onclick="readCurrentQuestion()">🔊 Ler pergunta</button>
 </div>
 
 <script>
@@ -505,12 +518,18 @@
     }
     
   } else if (selected === null) {
-    resultDiv.textContent = `⏰ Tempo esgotado! Resposta: ${correct}`;
+    resultDiv.textContent = "⏰ Tempo!, a Resposta é: ";
     resultDiv.style.color = "orange";
     document.getElementById("sound-wrong").play();
-    
+
+    const respostaElemento = document.createElement("div"); // Cria um novo elemento div
+    respostaElemento.textContent = correct;
+    respostaElemento.style.fontSize = "2em"; // Define um tamanho de fonte maior
+    respostaElemento.style.fontWeight = "bold"; // Opcional: para deixar em negrito
+    resultDiv.appendChild(respostaElemento); // Adiciona o novo elemento ao resultDiv
+ 
     if (window.speechSynthesis) {
-      const speech = new SpeechSynthesisUtterance(`Tempo esgotado! A resposta correta é: ${correct}`);
+      const speech = new SpeechSynthesisUtterance(`Tempo!, A resposta é: ${correct}`);
       speech.lang = 'pt-BR';
       speech.rate = 1.5;
       speech.onend = function() {
@@ -519,7 +538,7 @@
       };
       window.speechSynthesis.speak(speech);
     } else if (window.responsiveVoice) {
-      responsiveVoice.speak(`Tempo esgotado! A resposta correta é: ${correct}`, "Brazilian Portuguese Female", {
+      responsiveVoice.speak(`Tempo!, A resposta é: ${correct}`, "Brazilian Portuguese Female", {
         onend: function() {
           isReading = false;
           delayTimeout = setTimeout(() => nextWord(), 1000);
@@ -536,7 +555,7 @@
     document.getElementById("sound-wrong").play();
     
     if (window.speechSynthesis) {
-      const speech = new SpeechSynthesisUtterance(`Errou! A resposta correta é: ${correct}`);
+      const speech = new SpeechSynthesisUtterance(`Errou! A resposta é: ${correct}`);
       speech.lang = 'pt-BR';
       speech.rate = 1.5;
       speech.onend = function() {
@@ -545,7 +564,7 @@
       };
       window.speechSynthesis.speak(speech);
     } else if (window.responsiveVoice) {
-      responsiveVoice.speak(`Errou! A resposta correta é: ${correct}`, "Brazilian Portuguese Female", {
+      responsiveVoice.speak(`Errou! A resposta é: ${correct}`, "Brazilian Portuguese Female", {
         onend: function() {
           isReading = false;
           delayTimeout = setTimeout(() => nextWord(), 1000);
