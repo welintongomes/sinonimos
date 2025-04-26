@@ -28,159 +28,147 @@
       padding: 15px;
     }
     #options {
-    width: 100%; /* Garante que a div "options" ocupe toda a largura */
-    margin-bottom: 1rem; /* Mantém o espaçamento inferior */
+    width: 100%; 
+    margin-bottom: 1rem; 
 }
 
-#options > * { /* Aplica estilos a todos os elementos filhos diretos de "options" */
-    width: 100%; /* Faz com que cada opção ocupe 100% da largura da div "options" */
-    margin-bottom: 0.5rem; /* Adiciona um pequeno espaço entre as opções */
-    box-sizing: border-box; /* Garante que padding e border não aumentem a largura */
-    text-align: center; /* Opcional: centraliza o texto dentro de cada opção */
+#options > * { 
+    width: 100%; 
+    margin-bottom: 0.5rem; 
+    box-sizing: border-box;
+    text-align: center;
 }
 
 #result {
-    width: 100%; /* Garante que a div "result" ocupe toda a largura */
-    margin-bottom: 1rem; /* Mantém o espaçamento inferior */
-    text-align: center; /* Opcional: centraliza o texto dentro da div "result" */
+    width: 100%;
+    margin-bottom: 1rem;
+    text-align: center;
 }
 
-/* Media query para telas menores (ex: até 768 pixels de largura) */
 @media (max-width: 768px) {
     #options > * {
-        display: block; /* Força cada opção a ocupar uma linha separada */
-        font-size: 1.2rem; /* Ajusta o tamanho da fonte para telas menores */
+        display: block; 
+        font-size: 1.2rem;
     }
 
     #result {
-        font-size: 1.2rem; /* Ajusta o tamanho da fonte para telas menores */
+        font-size: 1.2rem;
     }
 }
 
-/* Media query para telas maiores (ex: acima de 768 pixels de largura - você pode ajustar este valor) */
+
 @media (min-width: 769px) {
     #options {
-        display: flex; /* Permite organizar as opções em linha */
-        flex-direction: row; /* Garante que a direção principal seja horizontal */
-        justify-content: space-around; /* Espaça as opções igualmente */
-        align-items: center; /* Alinha verticalmente ao centro, se necessário */
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
     }
 
     #options > * {
-        width: auto; /* As opções ajustam sua largura ao conteúdo */
-        margin-bottom: 0; /* Remove a margem inferior */
-        font-size: 1rem; /* Tamanho de fonte padrão para telas maiores */
+        width: auto; 
+        margin-bottom: 0; 
+        font-size: 1rem; 
     }
 
     #result {
-        font-size: 1rem; /* Tamanho de fonte padrão para telas maiores */
+        font-size: 1rem; 
     }
 }
 
-/* Media query para telas ainda maiores (ex: acima de 1200 pixels) */
 @media (min-width: 1200px) {
     #options > * {
-        font-size: 1.1rem; /* Aumenta um pouco o tamanho da fonte em telas maiores */
+        font-size: 1.1rem;
     }
 
     #result {
-        font-size: 1.1rem; /* Aumenta um pouco o tamanho da fonte em telas maiores */
+        font-size: 1.1rem;
     }
 }
 
 
-/* Media query para telas menores (ex: até 768 pixels de largura) */
 @media (max-width: 768px) {
     .btn-info{
-        width: 100%; /* Garante que o botão ocupe 100% da largura */
+        width: 100%;
     }
 }
 
-/* Media query para telas maiores (ex: acima de 768 pixels de largura) */
 @media (min-width: 769px) {
     .btn-info{
-        width: auto; /* O botão ajusta sua largura ao conteúdo */
-        /* As margens auto já estão definidas para centralizar */
+        width: auto; 
     }
 }
 
-
-/* Media query para telas menores (ex: até 768 pixels de largura) */
 @media (max-width: 768px) {
   .btn-success{
-        width: 100%; /* Garante que o botão ocupe 100% da largura */
+        width: 100%;
     }
 }
 
-/* Media query para telas maiores (ex: acima de 768 pixels de largura) */
 @media (min-width: 769px) {
     .btn-success{
-        width: auto; /* O botão ajusta sua largura ao conteúdo */
-        /* As margens auto já estão definidas para centralizar */
+        width: auto; 
     }
 }
 
-
-/* Media query para telas menores (ex: até 768 pixels de largura) */
 @media (max-width: 768px) {
     .btn-primary {
-        width: 100%; /* Garante que o botão ocupe 100% da largura */
+        width: 100%; 
     }
 }
 
-/* Media query para telas maiores (ex: acima de 768 pixels de largura) */
+
 @media (min-width: 769px) {
     .btn-primary {
-        width: auto; /* O botão ajusta sua largura ao conteúdo */
-        /* As margens auto já estão definidas para centralizar */
+        width: auto; 
     }
 }
 .bunn {
-    display: flex; /* Usamos flexbox para alinhar os itens em linha em telas maiores */
-    flex-direction: column; /* Alinhamento padrão em coluna para telas menores */
-    align-items: flex-start; /* Alinha os itens à esquerda em telas menores */
-    gap: 1rem; /* Adiciona um espaçamento entre os itens */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; 
+    gap: 1rem; 
 }
 
 .bunn > * {
-    width: 100%; /* Faz com que cada item ocupe a largura total em telas menores */
-    margin-bottom: 0; /* Remove a margem inferior padrão dos elementos filhos */
+    width: 100%; 
+    margin-bottom: 0; 
 }
 
 .bunn label {
-    margin-bottom: 0.25rem; /* Adiciona um pequeno espaço abaixo do label em telas menores */
+    margin-bottom: 0.25rem; 
 }
 
 .bunn .form-select {
-    width: 100%; /* Garante que o select ocupe a largura total em telas menores */
+    width: 100%; 
 }
 
-/* Media query para telas maiores (acima de 769 pixels) */
+
 @media (min-width: 770px) {
     .bunn {
-        flex-direction: row; /* Alinha os itens em linha */
-        /*align-items: center; /* Alinha verticalmente os itens ao centro */
+        flex-direction: row; 
+        
     }
 
     .bunn > * {
-        width: auto; /* Os itens ajustam sua largura ao conteúdo */
+        width: auto; 
     }
 
     .bunn .form-select {
-        width: auto; /* O select ajusta sua largura ao conteúdo */
-        margin-right: 1rem; /* Adiciona um espaço à direita do select */
+        width: auto; 
+        margin-right: 1rem;
     }
 
     .bunn .form-check {
-        margin-right: 1rem; /* Adiciona um espaço à direita do checkbox */
+        margin-right: 1rem; 
     }
 }
 /* Estilo específico para o select em telas menores */
 @media (max-width: 769px) {
-    .bunn .ain { /* Seleciona o select com a classe "ain" dentro de ".bunn" */
-        width: 100% !important; /* Força a largura a ser 100%, mesmo que haja outros estilos */
-        display: block; /* Garante que se comporte como um bloco e ocupe a largura total */
-        -webkit-appearance: none; /* Remove estilos padrões do navegador (opcional, mas pode ajudar) */
+    .bunn .ain { 
+        width: 100% !important; 
+        display: block; 
+        -webkit-appearance: none; 
         -moz-appearance: none;
         appearance: none;
     }
@@ -295,6 +283,8 @@
   let delayTimeout;
   let db;
   let difficulty = 10;
+  // variavel global verifica se tem alguma leitura em andamento
+  let isReading = false;
 
   // Configurações para lazy loading
   const ITEMS_PER_PAGE = 10;
@@ -364,6 +354,7 @@
   function loadWord() {
     clearInterval(timer);
     clearTimeout(delayTimeout);
+    stopSpeaking();
     timeLeft = difficulty;
     updateTimerDisplay();
 
@@ -412,7 +403,7 @@
     // Usando a API nativa SpeechSynthesis
     const speech = new SpeechSynthesisUtterance(questionText);
     speech.lang = 'pt-BR';
-    speech.rate = 2.5; // Velocidade da leitura da pergunta
+    speech.rate = 1.5; // Velocidade da leitura da pergunta
     
     speech.onend = function() {
       // Após ler a pergunta, espera 2 segundos e lê as opções
@@ -427,7 +418,7 @@
         
         const optionsSpeech = new SpeechSynthesisUtterance(optionsText);
         optionsSpeech.lang = 'pt-BR';
-        optionsSpeech.rate = 2.5;//velocidade da leitura das opções
+        optionsSpeech.rate = 1.5;//velocidade da leitura das opções
         
         optionsSpeech.onend = function() {
           // Reativa o botão quando terminar
@@ -477,49 +468,143 @@
   }
 
   function checkAnswer(selected) {
-    clearInterval(timer);
-    const current = questions[currentIndex];
-    const correct = current.correct;
-    const resultDiv = document.getElementById("result");
+  clearInterval(timer);
+  stopSpeaking();
+  const current = questions[currentIndex];
+  const correct = current.correct;
+  const resultDiv = document.getElementById("result");
+  isReading = true; // Marcar que uma leitura vai começar
 
-    if (selected === correct) {
-      resultDiv.textContent = "✅ Acertou!";
-      resultDiv.style.color = "green";
-      score++;
-      document.getElementById("sound-correct").play(); // som de acerto
-    } else if (selected === null) {
-      resultDiv.textContent = `⏰ Tempo esgotado! Resposta: ${correct}`;
-      resultDiv.style.color = "orange";
-      document.getElementById("sound-wrong").play(); // som de erro
+  if (selected === correct) {
+    resultDiv.textContent = "✅ Acertou!";
+    resultDiv.style.color = "green";
+    score++;
+    document.getElementById("sound-correct").play();
+    
+    if (window.speechSynthesis) {
+      const speech = new SpeechSynthesisUtterance("Acertou!");
+      speech.lang = 'pt-BR';
+      speech.rate = 1.5;
+      speech.onend = function() {
+        isReading = false; // Leitura terminou
+        delayTimeout = setTimeout(() => nextWord(), 1000); // Reduzido para 1 segundo após a leitura
+      };
+      window.speechSynthesis.speak(speech);
+    } else if (window.responsiveVoice) {
+      responsiveVoice.speak("Acertou!", "Brazilian Portuguese Female", {
+        onend: function() {
+          isReading = false;
+          delayTimeout = setTimeout(() => nextWord(), 1000);
+        }
+      });
     } else {
-      resultDiv.textContent = `❌ Errou! Resposta: ${correct}`;
-      resultDiv.style.color = "red";
-      document.getElementById("sound-wrong").play(); // som de erro
+      // Se não houver suporte à síntese de voz, continue normalmente
+      isReading = false;
+      delayTimeout = setTimeout(() => nextWord(), 3000);
     }
-
-    document.getElementById("score").textContent = `Pontuação: ${score}/${questions.length}`;
-
-    delayTimeout = setTimeout(() => nextWord(), 3000);//tempo entre uma pergunta e outra 3 seg
+    
+  } else if (selected === null) {
+    resultDiv.textContent = `⏰ Tempo esgotado! Resposta: ${correct}`;
+    resultDiv.style.color = "orange";
+    document.getElementById("sound-timeout").play();
+    
+    if (window.speechSynthesis) {
+      const speech = new SpeechSynthesisUtterance(`Tempo esgotado! A resposta correta é: ${correct}`);
+      speech.lang = 'pt-BR';
+      speech.rate = 1.5;
+      speech.onend = function() {
+        isReading = false;
+        delayTimeout = setTimeout(() => nextWord(), 1000);
+      };
+      window.speechSynthesis.speak(speech);
+    } else if (window.responsiveVoice) {
+      responsiveVoice.speak(`Tempo esgotado! A resposta correta é: ${correct}`, "Brazilian Portuguese Female", {
+        onend: function() {
+          isReading = false;
+          delayTimeout = setTimeout(() => nextWord(), 1000);
+        }
+      });
+    } else {
+      isReading = false;
+      delayTimeout = setTimeout(() => nextWord(), 3000);
+    }
+    
+  } else {
+    resultDiv.textContent = `❌ Errou! Resposta: ${correct}`;
+    resultDiv.style.color = "red";
+    document.getElementById("sound-wrong").play();
+    
+    if (window.speechSynthesis) {
+      const speech = new SpeechSynthesisUtterance(`Errou! A resposta correta é: ${correct}`);
+      speech.lang = 'pt-BR';
+      speech.rate = 1.5;
+      speech.onend = function() {
+        isReading = false;
+        delayTimeout = setTimeout(() => nextWord(), 1000);
+      };
+      window.speechSynthesis.speak(speech);
+    } else if (window.responsiveVoice) {
+      responsiveVoice.speak(`Errou! A resposta correta é: ${correct}`, "Brazilian Portuguese Female", {
+        onend: function() {
+          isReading = false;
+          delayTimeout = setTimeout(() => nextWord(), 1000);
+        }
+      });
+    } else {
+      isReading = false;
+      delayTimeout = setTimeout(() => nextWord(), 3000);
+    }
   }
 
-  function nextWord() {
-    clearTimeout(delayTimeout);
-    currentIndex++;
-    if (currentIndex < questions.length) {
-      loadWord();
-    } else {
-      endGame();
-    }
+  document.getElementById("score").textContent = `Pontuação: ${score}/${questions.length}`;
+}
+
+function nextWord() {
+  clearTimeout(delayTimeout);
+  
+  // Se estiver lendo, só interrompe a leitura, mas não avança para a próxima palavra
+  if (isReading) {
+    stopSpeaking();
+    isReading = false;
+    return; // Sai da função sem avançar
   }
+  
+  currentIndex++;
+  if (currentIndex < questions.length) {
+    loadWord();
+  } else {
+    endGame();
+  }
+}
 
   function endGame() {
+    stopSpeaking();//interrompe a leitura
     document.getElementById("word").textContent = "🏁 Fim de jogo!";
     document.getElementById("options").innerHTML = "";
     document.getElementById("result").textContent = `Pontuação final: ${score}/${questions.length}`;
     document.getElementById("timer").textContent = "";
     updateStatistics(score, questions.length);
+    if (window.speechSynthesis) {
+    const speech = new SpeechSynthesisUtterance(`Fim de jogo! Sua pontuação final é: ${score} de ${questions.length}`);
+    speech.lang = 'pt-BR';
+    speech.rate = 1.5;
+    window.speechSynthesis.speak(speech);
+  } else if (window.responsiveVoice) {
+    responsiveVoice.speak(`Fim de jogo! Sua pontuação final é: ${score} de ${questions.length}`, "Brazilian Portuguese Female");
+  }
+  
+  document.getElementById("sound-gameover").play(); // som de fim de jogo
   }
 
+  //configuraçao para interromper a leitura
+  function stopSpeaking() {
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  } else if (window.responsiveVoice) {
+    responsiveVoice.cancel();
+  }
+  isReading = false;
+}
   function updateStatistics(correct, total) {
   // Recuperar estatísticas atuais do localStorage
   let stats = JSON.parse(localStorage.getItem('sinonimosStats')) || {
