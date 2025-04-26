@@ -49,6 +49,7 @@
     #options > * {
         display: block; 
         font-size: 1.2rem;
+        padding-top: 2rem;
     }
 
     #result {
@@ -506,7 +507,7 @@
   } else if (selected === null) {
     resultDiv.textContent = `⏰ Tempo esgotado! Resposta: ${correct}`;
     resultDiv.style.color = "orange";
-    document.getElementById("sound-timeout").play();
+    document.getElementById("sound-wrong").play();
     
     if (window.speechSynthesis) {
       const speech = new SpeechSynthesisUtterance(`Tempo esgotado! A resposta correta é: ${correct}`);
