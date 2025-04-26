@@ -10,7 +10,30 @@
     #options button { margin: 5px; }
     #timer { font-weight: bold; }
     #game-area { display: none; }
+    #search-box { margin-bottom: 15px; }
+    .word-list-container { 
+      max-height: 400px; 
+      overflow-y: auto;
+      border: 1px solid #dee2e6;
+      border-radius: 0.25rem;
+    }
+    #no-results {
+      padding: 10px;
+      text-align: center;
+      color: #6c757d;
+      display: none;
+    }
+    .loading-spinner {
+      text-align: center;
+      padding: 15px;
+    }
   </style>
+  <!-- Adicione esta linha para ativar a API de voz -->
+<script src="https://code.responsivevoice.org/responsivevoice.js?key=YOUR_API_KEY"></script>
+<audio id="sound-correct" src="https://assets.mixkit.co/active_storage/sfx/235/235-preview.mp3" preload="auto"></audio>
+<audio id="sound-wrong" src="https://assets.mixkit.co/active_storage/sfx/237/237-preview.mp3" preload="auto"></audio>
+<audio id="sound-timeout" src="https://assets.mixkit.co/active_storage/sfx/1039/1039-preview.mp3" preload="auto"></audio>
+<audio id="sound-gameover" src="https://assets.mixkit.co/active_storage/sfx/1111/1111-preview.mp3" preload="auto"></audio>
 </head>
 <body>
 
@@ -24,6 +47,12 @@
       <option value="10">Médio (10s)</option>
       <option value="5">Difícil (5s)</option>
     </select>
+    <div class="form-check mb-2">
+      <input class="form-check-input" type="checkbox" id="auto-read">
+      <label class="form-check-label" for="auto-read">
+        Ler perguntas automaticamente
+      </label>
+    </div>
     <button class="btn btn-primary" onclick="startGame()">🎮 Iniciar Jogo</button>
   </div>
 
@@ -31,14 +60,38 @@
     <div id="word" class="h4 mb-3"></div>
     <div id="options" class="mb-3"></div>
     <div id="result" class="mb-2"></div>
+    <button id="read-question" class="btn btn-sm btn-info mb-2" onclick="readCurrentQuestion()">🔊 Ler pergunta</button>
     <div id="timer"></div>
     <div id="score" class="mt-2"></div>
     <button class="btn btn-secondary mt-2" onclick="nextWord()">Próxima</button>
   </div>
 
   <hr>
+  <div class="statistics-box mt-4 p-3 bg-light border rounded">
+    <h4>Estatísticas</h4>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card text-center p-2">
+          <h3 id="stat-games">0</h3>
+          <p>Jogos</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-center p-2">
+          <h3 id="stat-correct">0</h3>
+          <p>Acertos</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-center p-2">
+          <h3 id="stat-percentage">0%</h3>
+          <p>Taxa de Acerto</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <h3>Painel do Administrador</h3>
+  <h3>Adicionar Novas Perguntas</h3>
   <div class="mb-3">
     <input type="text" class="form-control mb-2" id="admin-word" placeholder="Palavra">
     <input type="text" class="form-control mb-2" id="admin-correct" placeholder="Sinônimo correto">
@@ -51,13 +104,29 @@
     <input type="file" class="form-control mb-2" onchange="importFromJson(event)">
     <button class="btn btn-info" onclick="exportToJson()">Exportar JSON</button>
   </div>
+  
+  
   <h5 class="mt-4">Palavras Cadastradas</h5>
-<ul id="word-list" class="list-group mb-3"></ul>
-
+  <div id="search-box" class="input-group">
+    <span class="input-group-text">🔍</span>
+    <input type="text" class="form-control" id="search-input" placeholder="Buscar palavras...">
+    <button class="btn btn-outline-secondary" onclick="clearSearch()">Limpar</button>
+  </div>
+  
+  <div class="word-list-container">
+    <ul id="word-list" class="list-group mb-3"></ul>
+    <div id="no-results">Nenhuma palavra encontrada</div>
+    <div id="loading-more" class="loading-spinner">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Carregando...</span>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
   let allWords = [];
+  let filteredWords = [];
   let questions = [];
   let score = 0;
   let timer;
@@ -66,6 +135,20 @@
   let delayTimeout;
   let db;
   let difficulty = 10;
+
+  // Configurações para lazy loading
+  const ITEMS_PER_PAGE = 10;
+  let currentPage = 0;
+  let isLoading = false;
+  let hasMoreItems = true;
+
+  document.addEventListener('DOMContentLoaded', () => {
+  const stats = JSON.parse(localStorage.getItem('sinonimosStats')) || { games: 0, correct: 0, total: 0 };
+  document.getElementById('stat-games').textContent = stats.games;
+  document.getElementById('stat-correct').textContent = stats.correct;
+  document.getElementById('stat-percentage').textContent = 
+    stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) + '%' : '0%';
+});
 
   const request = indexedDB.open("SinonimosDB", 1);
   request.onupgradeneeded = function (event) {
@@ -86,13 +169,14 @@
     const getAll = store.getAll();
     getAll.onsuccess = () => {
       allWords = getAll.result;
+      filteredWords = [...allWords];
       if (allWords.length === 0) {
         const defaults = [
-          { word: "feliz", correct: "contente", options: ["contente", "triste", "nervoso"] },
-          { word: "bonito", correct: "belo", options: ["feio", "belo", "velho"] },
           { word: "inteligente", correct: "sagaz", options: ["bobo", "sagaz", "lento"] }
         ];
         defaults.forEach(w => saveWordToDB(w));
+      } else {
+        resetWordList();
       }
     };
   }
@@ -101,6 +185,9 @@
     const tx = db.transaction("palavras", "readwrite");
     const store = tx.objectStore("palavras");
     store.put(wordObj);
+    tx.oncomplete = () => {
+      loadWordsFromDB();
+    };
   }
 
   function startGame() {
@@ -142,8 +229,88 @@
         clearInterval(timer);
         checkAnswer(null);
       }
-    }, 1000);
+    }, 1000);//altere para velocidade do timer atual 1 segundo real
+    const readBtn = document.getElementById("read-question");
+  readBtn.disabled = false;
+  readBtn.textContent = "🔊 Ler pergunta";
+  if (document.getElementById("auto-read") && document.getElementById("auto-read").checked) {
+    setTimeout(() => readCurrentQuestion(), 50);//velocidade do inicio da leitura
+    }
   }
+
+  function readCurrentQuestion() {
+  // Desabilita o botão durante a leitura
+  const readBtn = document.getElementById("read-question");
+  readBtn.disabled = true;
+  readBtn.textContent = "🔄 Lendo...";
+  
+  const current = questions[currentIndex];
+  const questionText = `sinônimo de: ${current.word}`;
+  
+  // Lê a pergunta
+  if (window.speechSynthesis) {
+    // Usando a API nativa SpeechSynthesis
+    const speech = new SpeechSynthesisUtterance(questionText);
+    speech.lang = 'pt-BR';
+    speech.rate = 2.5; // Velocidade da leitura da pergunta
+    
+    speech.onend = function() {
+      // Após ler a pergunta, espera 2 segundos e lê as opções
+      setTimeout(() => {
+        const options = current.options;
+        let optionsText = "opções: ";
+        
+        options.forEach((option, index) => {
+          if (index > 0) optionsText += ", ";
+          optionsText += option;
+        });
+        
+        const optionsSpeech = new SpeechSynthesisUtterance(optionsText);
+        optionsSpeech.lang = 'pt-BR';
+        optionsSpeech.rate = 2.5;//velocidade da leitura das opções
+        
+        optionsSpeech.onend = function() {
+          // Reativa o botão quando terminar
+          readBtn.disabled = false;
+          readBtn.textContent = "🔊 Ler pergunta";
+        };
+        
+        window.speechSynthesis.speak(optionsSpeech);
+      }, 200); // Pausa de 1 milisegundo entre a pergunta e as opções
+    };
+    
+    window.speechSynthesis.speak(speech);
+  } 
+  else if (window.responsiveVoice) {
+    // Fallback para ResponsiveVoice se disponível
+    responsiveVoice.speak(questionText, "Brazilian Portuguese Female", {
+      onend: function() {
+        setTimeout(() => {
+          const options = current.options;
+          let optionsText = "opções são: ";
+          
+          options.forEach((option, index) => {
+            if (index > 0) optionsText += ", ";
+            optionsText += option;
+          });
+          
+          responsiveVoice.speak(optionsText, "Brazilian Portuguese Female", {
+            onend: function() {
+              readBtn.disabled = false;
+              readBtn.textContent = "🔊 Ler pergunta";
+            }
+          });
+        }, 2000);//---
+      }
+    });
+  }
+  else {
+    // Se nenhuma API de voz estiver disponível
+    alert("Seu navegador não suporta leitura de texto.");
+    readBtn.disabled = false;
+    readBtn.textContent = "🔊 Ler pergunta";
+  }
+}
 
   function updateTimerDisplay() {
     document.getElementById("timer").textContent = `⏳ Tempo: ${timeLeft}s`;
@@ -159,17 +326,20 @@
       resultDiv.textContent = "✅ Acertou!";
       resultDiv.style.color = "green";
       score++;
+      document.getElementById("sound-correct").play(); // som de acerto
     } else if (selected === null) {
       resultDiv.textContent = `⏰ Tempo esgotado! Resposta: ${correct}`;
       resultDiv.style.color = "orange";
+      document.getElementById("sound-timeout").play(); // som de tempo esgotado
     } else {
       resultDiv.textContent = `❌ Errou! Resposta: ${correct}`;
       resultDiv.style.color = "red";
+      document.getElementById("sound-wrong").play(); // som de erro
     }
 
     document.getElementById("score").textContent = `Pontuação: ${score}/${questions.length}`;
 
-    delayTimeout = setTimeout(() => nextWord(), 3000);
+    delayTimeout = setTimeout(() => nextWord(), 3000);//tempo entre uma pergunta e outra 3 seg
   }
 
   function nextWord() {
@@ -187,12 +357,37 @@
     document.getElementById("options").innerHTML = "";
     document.getElementById("result").textContent = `Pontuação final: ${score}/${questions.length}`;
     document.getElementById("timer").textContent = "";
+    updateStatistics(score, questions.length);
   }
+
+  function updateStatistics(correct, total) {
+  // Recuperar estatísticas atuais do localStorage
+  let stats = JSON.parse(localStorage.getItem('sinonimosStats')) || {
+    games: 0,
+    correct: 0,
+    total: 0
+  };
+  
+  // Atualizar estatísticas
+  stats.games++;
+  stats.correct += correct;
+  stats.total += total;
+  
+  // Salvar no localStorage
+  localStorage.setItem('sinonimosStats', JSON.stringify(stats));
+  
+  // Atualizar a UI
+  document.getElementById('stat-games').textContent = stats.games;
+  document.getElementById('stat-correct').textContent = stats.correct;
+  document.getElementById('stat-percentage').textContent = 
+    stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) + '%' : '0%';
+}
 
   function addWord() {
     const word = document.getElementById("admin-word").value.trim();
     const correct = document.getElementById("admin-correct").value.trim();
-    const options = document.getElementById("admin-options").value.split(",").map(o => o.trim());
+    const optionsInput = document.getElementById("admin-options").value;
+    const options = optionsInput.split(",").map(o => o.trim());
 
     if (!word || !correct || options.length !== 3) {
       alert("Preencha todos os campos corretamente!");
@@ -245,87 +440,136 @@
     }
     return array;
   }
-  function refreshWordList() {
-  const tx = db.transaction("palavras", "readonly");
-  const store = tx.objectStore("palavras");
-  const req = store.getAll();
-  req.onsuccess = () => {
+
+  function resetWordList() {
     const list = document.getElementById("word-list");
     list.innerHTML = "";
-    req.result.forEach(item => {
-      const li = document.createElement("li");
-      li.className = "list-group-item d-flex justify-content-between align-items-start";
-
-      const text = document.createElement("div");
-      text.innerHTML = `<strong>${item.word}</strong>: ${item.options.join(", ")} (✅ ${item.correct})`;
-      li.appendChild(text);
-
-      const btnGroup = document.createElement("div");
-      btnGroup.className = "btn-group";
-
-      const editBtn = document.createElement("button");
-      editBtn.className = "btn btn-sm btn-warning";
-      editBtn.textContent = "Editar";
-      editBtn.onclick = () => editWord(item);
-
-      const deleteBtn = document.createElement("button");
-      deleteBtn.className = "btn btn-sm btn-danger";
-      deleteBtn.textContent = "Excluir";
-      deleteBtn.onclick = () => deleteWord(item.word);
-
-      btnGroup.appendChild(editBtn);
-      btnGroup.appendChild(deleteBtn);
-      li.appendChild(btnGroup);
-
-      list.appendChild(li);
-    });
-  };
-}
-
-function editWord(item) {
-  document.getElementById("admin-word").value = item.word;
-  document.getElementById("admin-correct").value = item.correct;
-  document.getElementById("admin-options").value = item.options.join(", ");
-}
-
-function deleteWord(word) {
-  const tx = db.transaction("palavras", "readwrite");
-  const store = tx.objectStore("palavras");
-  store.delete(word);
-  tx.oncomplete = () => {
-    loadWordsFromDB();
-    alert(`Palavra "${word}" removida.`);
-  };
-}
-
-// Atualiza a função saveWordToDB para também atualizar a lista após salvar
-function saveWordToDB(wordObj) {
-  const tx = db.transaction("palavras", "readwrite");
-  const store = tx.objectStore("palavras");
-  store.put(wordObj);
-  tx.oncomplete = () => refreshWordList(); // Atualiza lista ao salvar
-}
-
-// Atualiza a função loadWordsFromDB para exibir a lista após carregar
-function loadWordsFromDB() {
-  const tx = db.transaction("palavras", "readonly");
-  const store = tx.objectStore("palavras");
-  const getAll = store.getAll();
-  getAll.onsuccess = () => {
-    allWords = getAll.result;
-    if (allWords.length === 0) {
-      const defaults = [
-        { word: "feliz", correct: "contente", options: ["contente", "triste", "nervoso"] },
-        { word: "bonito", correct: "belo", options: ["feio", "belo", "velho"] },
-        { word: "inteligente", correct: "sagaz", options: ["bobo", "sagaz", "lento"] }
-      ];
-      defaults.forEach(w => saveWordToDB(w));
-    } else {
-      refreshWordList();
+    currentPage = 0;
+    hasMoreItems = true;
+    loadMoreWords();
+    
+    // Configurar busca
+    document.getElementById("search-input").addEventListener("input", handleSearch);
+    
+    // Configurar detecção de scroll para lazy loading
+    document.querySelector(".word-list-container").addEventListener("scroll", handleScroll);
+  }
+  
+  function handleScroll(e) {
+    const container = e.target;
+    if (isLoading || !hasMoreItems) return;
+    
+    // Se estiver perto do final da lista, carrega mais itens
+    if (container.scrollHeight - container.scrollTop <= container.clientHeight + 100) {
+      loadMoreWords();
     }
-  };
-}
+  }
+  
+  function loadMoreWords() {
+    if (isLoading || !hasMoreItems) return;
+    
+    isLoading = true;
+    document.getElementById("loading-more").style.display = "block";
+    
+    setTimeout(() => {
+      const list = document.getElementById("word-list");
+      const startIndex = currentPage * ITEMS_PER_PAGE;
+      const endIndex = startIndex + ITEMS_PER_PAGE;
+      const itemsToShow = filteredWords.slice(startIndex, endIndex);
+      
+      if (itemsToShow.length === 0) {
+        hasMoreItems = false;
+        document.getElementById("loading-more").style.display = "none";
+        
+        if (currentPage === 0) {
+          document.getElementById("no-results").style.display = "block";
+        }
+        
+        isLoading = false;
+        return;
+      }
+      
+      itemsToShow.forEach(item => {
+        const li = document.createElement("li");
+        li.className = "list-group-item d-flex justify-content-between align-items-start";
 
+        const text = document.createElement("div");
+        text.innerHTML = `<strong>${item.word}</strong>: ${item.options.join(", ")} (✅ ${item.correct})`;
+        li.appendChild(text);
+
+        const btnGroup = document.createElement("div");
+        btnGroup.className = "btn-group";
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "btn btn-sm btn-warning";
+        editBtn.textContent = "Editar";
+        editBtn.onclick = () => editWord(item);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "btn btn-sm btn-danger";
+        deleteBtn.textContent = "Excluir";
+        deleteBtn.onclick = () => deleteWord(item.word);
+
+        btnGroup.appendChild(editBtn);
+        btnGroup.appendChild(deleteBtn);
+        li.appendChild(btnGroup);
+
+        list.appendChild(li);
+      });
+      
+      currentPage++;
+      isLoading = false;
+      document.getElementById("loading-more").style.display = hasMoreItems ? "block" : "none";
+    }, 300); // Simula um pequeno atraso de carregamento para melhor UX
+  }
+
+  function handleSearch() {
+    const searchTerm = document.getElementById("search-input").value.toLowerCase().trim();
+    
+    if (searchTerm === "") {
+      filteredWords = [...allWords];
+    } else {
+      filteredWords = allWords.filter(item => 
+        item.word.toLowerCase().includes(searchTerm) || 
+        item.correct.toLowerCase().includes(searchTerm) ||
+        item.options.some(opt => opt.toLowerCase().includes(searchTerm))
+      );
+    }
+    
+    // Resetar a lista e mostrar os resultados filtrados
+    document.getElementById("word-list").innerHTML = "";
+    document.getElementById("no-results").style.display = "none";
+    currentPage = 0;
+    hasMoreItems = true;
+    loadMoreWords();
+  }
+  
+  function clearSearch() {
+    document.getElementById("search-input").value = "";
+    filteredWords = [...allWords];
+    document.getElementById("word-list").innerHTML = "";
+    document.getElementById("no-results").style.display = "none";
+    currentPage = 0;
+    hasMoreItems = true;
+    loadMoreWords();
+  }
+
+  function editWord(item) {
+    document.getElementById("admin-word").value = item.word;
+    document.getElementById("admin-correct").value = item.correct;
+    document.getElementById("admin-options").value = item.options.join(", ");
+  }
+
+  function deleteWord(word) {
+    if (confirm(`Tem certeza que deseja excluir a palavra "${word}"?`)) {
+      const tx = db.transaction("palavras", "readwrite");
+      const store = tx.objectStore("palavras");
+      store.delete(word);
+      tx.oncomplete = () => {
+        loadWordsFromDB();
+      };
+    }
+  }
 </script>
 
 </body>
