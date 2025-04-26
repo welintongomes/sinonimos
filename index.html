@@ -27,6 +27,164 @@
       text-align: center;
       padding: 15px;
     }
+    #options {
+    width: 100%; /* Garante que a div "options" ocupe toda a largura */
+    margin-bottom: 1rem; /* Mantém o espaçamento inferior */
+}
+
+#options > * { /* Aplica estilos a todos os elementos filhos diretos de "options" */
+    width: 100%; /* Faz com que cada opção ocupe 100% da largura da div "options" */
+    margin-bottom: 0.5rem; /* Adiciona um pequeno espaço entre as opções */
+    box-sizing: border-box; /* Garante que padding e border não aumentem a largura */
+    text-align: center; /* Opcional: centraliza o texto dentro de cada opção */
+}
+
+#result {
+    width: 100%; /* Garante que a div "result" ocupe toda a largura */
+    margin-bottom: 1rem; /* Mantém o espaçamento inferior */
+    text-align: center; /* Opcional: centraliza o texto dentro da div "result" */
+}
+
+/* Media query para telas menores (ex: até 768 pixels de largura) */
+@media (max-width: 768px) {
+    #options > * {
+        display: block; /* Força cada opção a ocupar uma linha separada */
+        font-size: 1.2rem; /* Ajusta o tamanho da fonte para telas menores */
+    }
+
+    #result {
+        font-size: 1.2rem; /* Ajusta o tamanho da fonte para telas menores */
+    }
+}
+
+/* Media query para telas maiores (ex: acima de 768 pixels de largura - você pode ajustar este valor) */
+@media (min-width: 769px) {
+    #options {
+        display: flex; /* Permite organizar as opções em linha */
+        flex-direction: row; /* Garante que a direção principal seja horizontal */
+        justify-content: space-around; /* Espaça as opções igualmente */
+        align-items: center; /* Alinha verticalmente ao centro, se necessário */
+    }
+
+    #options > * {
+        width: auto; /* As opções ajustam sua largura ao conteúdo */
+        margin-bottom: 0; /* Remove a margem inferior */
+        font-size: 1rem; /* Tamanho de fonte padrão para telas maiores */
+    }
+
+    #result {
+        font-size: 1rem; /* Tamanho de fonte padrão para telas maiores */
+    }
+}
+
+/* Media query para telas ainda maiores (ex: acima de 1200 pixels) */
+@media (min-width: 1200px) {
+    #options > * {
+        font-size: 1.1rem; /* Aumenta um pouco o tamanho da fonte em telas maiores */
+    }
+
+    #result {
+        font-size: 1.1rem; /* Aumenta um pouco o tamanho da fonte em telas maiores */
+    }
+}
+
+
+/* Media query para telas menores (ex: até 768 pixels de largura) */
+@media (max-width: 768px) {
+    .btn-info{
+        width: 100%; /* Garante que o botão ocupe 100% da largura */
+    }
+}
+
+/* Media query para telas maiores (ex: acima de 768 pixels de largura) */
+@media (min-width: 769px) {
+    .btn-info{
+        width: auto; /* O botão ajusta sua largura ao conteúdo */
+        /* As margens auto já estão definidas para centralizar */
+    }
+}
+
+
+/* Media query para telas menores (ex: até 768 pixels de largura) */
+@media (max-width: 768px) {
+  .btn-success{
+        width: 100%; /* Garante que o botão ocupe 100% da largura */
+    }
+}
+
+/* Media query para telas maiores (ex: acima de 768 pixels de largura) */
+@media (min-width: 769px) {
+    .btn-success{
+        width: auto; /* O botão ajusta sua largura ao conteúdo */
+        /* As margens auto já estão definidas para centralizar */
+    }
+}
+
+
+/* Media query para telas menores (ex: até 768 pixels de largura) */
+@media (max-width: 768px) {
+    .btn-primary {
+        width: 100%; /* Garante que o botão ocupe 100% da largura */
+    }
+}
+
+/* Media query para telas maiores (ex: acima de 768 pixels de largura) */
+@media (min-width: 769px) {
+    .btn-primary {
+        width: auto; /* O botão ajusta sua largura ao conteúdo */
+        /* As margens auto já estão definidas para centralizar */
+    }
+}
+.bunn {
+    display: flex; /* Usamos flexbox para alinhar os itens em linha em telas maiores */
+    flex-direction: column; /* Alinhamento padrão em coluna para telas menores */
+    align-items: flex-start; /* Alinha os itens à esquerda em telas menores */
+    gap: 1rem; /* Adiciona um espaçamento entre os itens */
+}
+
+.bunn > * {
+    width: 100%; /* Faz com que cada item ocupe a largura total em telas menores */
+    margin-bottom: 0; /* Remove a margem inferior padrão dos elementos filhos */
+}
+
+.bunn label {
+    margin-bottom: 0.25rem; /* Adiciona um pequeno espaço abaixo do label em telas menores */
+}
+
+.bunn .form-select {
+    width: 100%; /* Garante que o select ocupe a largura total em telas menores */
+}
+
+/* Media query para telas maiores (acima de 769 pixels) */
+@media (min-width: 770px) {
+    .bunn {
+        flex-direction: row; /* Alinha os itens em linha */
+        /*align-items: center; /* Alinha verticalmente os itens ao centro */
+    }
+
+    .bunn > * {
+        width: auto; /* Os itens ajustam sua largura ao conteúdo */
+    }
+
+    .bunn .form-select {
+        width: auto; /* O select ajusta sua largura ao conteúdo */
+        margin-right: 1rem; /* Adiciona um espaço à direita do select */
+    }
+
+    .bunn .form-check {
+        margin-right: 1rem; /* Adiciona um espaço à direita do checkbox */
+    }
+}
+/* Estilo específico para o select em telas menores */
+@media (max-width: 769px) {
+    .bunn .ain { /* Seleciona o select com a classe "ain" dentro de ".bunn" */
+        width: 100% !important; /* Força a largura a ser 100%, mesmo que haja outros estilos */
+        display: block; /* Garante que se comporte como um bloco e ocupe a largura total */
+        -webkit-appearance: none; /* Remove estilos padrões do navegador (opcional, mas pode ajudar) */
+        -moz-appearance: none;
+        appearance: none;
+    }
+}
   </style>
   <!-- Adicione esta linha para ativar a API de voz -->
 <script src="https://code.responsivevoice.org/responsivevoice.js?key=YOUR_API_KEY"></script>
@@ -38,28 +196,30 @@
 <body>
 
 <div class="container">
-  <h1 class="mb-4">🧠 Jogo de Sinônimos</h1>
-
-  <div class="mb-3">
-    <label for="difficulty">Dificuldade:</label>
-    <select id="difficulty" class="form-select w-25 mb-3">
+  <h1 class="mb-4" style="text-align: center;">🧠 Jogo de Sinônimos</h1>
+  
+  <div class="mb-3 bunn">
+    <button class="btn btn-primary" onclick="startGame()">🎮 Iniciar Jogo</button>
+    <!--<label for="difficulty">Dificuldade:</label>-->
+    <select id="difficulty" class="ain form-select w-25 mb-3">
       <option value="15">Fácil (15s)</option>
       <option value="10">Médio (10s)</option>
       <option value="5">Difícil (5s)</option>
     </select>
+    
     <div class="form-check mb-2">
       <input class="form-check-input" type="checkbox" id="auto-read">
       <label class="form-check-label" for="auto-read">
         Ler perguntas automaticamente
       </label>
     </div>
-    <button class="btn btn-primary" onclick="startGame()">🎮 Iniciar Jogo</button>
+    
   </div>
 
   <div id="game-area">
-    <div id="word" class="h4 mb-3"></div>
+    <div style="text-align: center;" id="word" class="h4 mb-3"></div>
     <div id="options" class="mb-3"></div>
-    <div id="result" class="mb-2"></div>
+    <div style="text-align: center;" id="result" class="mb-2"></div>
     <button id="read-question" class="btn btn-sm btn-info mb-2" onclick="readCurrentQuestion()">🔊 Ler pergunta</button>
     <div id="timer"></div>
     <div id="score" class="mt-2"></div>
@@ -252,7 +412,7 @@
     // Usando a API nativa SpeechSynthesis
     const speech = new SpeechSynthesisUtterance(questionText);
     speech.lang = 'pt-BR';
-    speech.rate = 1.5; // Velocidade da leitura da pergunta
+    speech.rate = 2.5; // Velocidade da leitura da pergunta
     
     speech.onend = function() {
       // Após ler a pergunta, espera 2 segundos e lê as opções
@@ -267,7 +427,7 @@
         
         const optionsSpeech = new SpeechSynthesisUtterance(optionsText);
         optionsSpeech.lang = 'pt-BR';
-        optionsSpeech.rate = 1.5;//velocidade da leitura das opções
+        optionsSpeech.rate = 2.5;//velocidade da leitura das opções
         
         optionsSpeech.onend = function() {
           // Reativa o botão quando terminar
@@ -330,7 +490,7 @@
     } else if (selected === null) {
       resultDiv.textContent = `⏰ Tempo esgotado! Resposta: ${correct}`;
       resultDiv.style.color = "orange";
-      document.getElementById("sound-timeout").play(); // som de tempo esgotado
+      document.getElementById("sound-wrong").play(); // som de erro
     } else {
       resultDiv.textContent = `❌ Errou! Resposta: ${correct}`;
       resultDiv.style.color = "red";
