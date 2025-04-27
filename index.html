@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Jogo de Sinônimos</title>
+  <title>Jogo das Perguntas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
@@ -194,7 +194,7 @@ h3, h4, h5 {
 
 <div class="container">
   <h1 class="mb-4" style="text-align: center;">
-    🧠Sinônimos
+    🧠Perguntas
     <span>
       <input class="form-check-input me-2" type="checkbox" id="auto-read">
       <label class="form-check-label" for="auto-read">
@@ -253,9 +253,9 @@ h3, h4, h5 {
 
   <h3>Adicionar Novas Perguntas</h3>
   <div class="mb-3">
-    <input type="text" class="form-control mb-2" id="admin-word" placeholder="Palavra">
-    <input type="text" class="form-control mb-2" id="admin-correct" placeholder="Sinônimo correto">
-    <input type="text" class="form-control mb-2" id="admin-options" placeholder="3 opções separadas por vírgula">
+    <input type="text" class="form-control mb-2" id="admin-word" placeholder="Pergunta">
+    <input type="text" class="form-control mb-2" id="admin-correct" placeholder="Resposta Correta">
+    <input type="text" class="form-control mb-2" id="admin-options" placeholder="até 20 opções separadas por , ">
     <button class="btn btn-success" onclick="addWord()">Adicionar Palavra</button>
   </div>
 
@@ -343,494 +343,15 @@ document.getElementById("auto-read").addEventListener("change", function() {
       if (allWords.length === 0) {
         const defaults = [
   {
-    "word": "amor",
-    "correct": "afeto",
-    "options": ["rancor", "afeto", "fúria"]
-  },
-  {
-    "word": "anuência",
+    "word": "Qual o Sinônimo de anuência?",
     "correct": "consentimento",
     "options": ["rejeição", "consentimento", "negação"]
   },
   {
-    "word": "análogo",
+    "word": "Qual o Sinônimo de análogo?",
     "correct": "semelhante",
     "options": ["contrário", "semelhante", "diferente"]
-  },
-  {
-    "word": "abstrato",
-    "correct": "intangível",
-    "options": ["visível", "intangível", "palpável"]
-  },
-  {
-    "word": "alienado",
-    "correct": "desligado",
-    "options": ["conectado", "desligado", "atento"]
-  },
-  {
-    "word": "apogeu",
-    "correct": "auge",
-    "options": ["queda", "auge", "início"]
-  },
-  {
-    "word": "altruísmo",
-    "correct": "generosidade",
-    "options": ["egoísmo", "ganância", "generosidade"]
-  },
-  {
-    "word": "ardiloso",
-    "correct": "astuto",
-    "options": ["inocente", "astuto", "honesto"]
-  },
-  {
-    "word": "altruísta",
-    "correct": "generoso",
-    "options": ["avarento", "mesquinho", "generoso"]
-  },
-  {
-    "word": "apático",
-    "correct": "indiferente",
-    "options": ["envolvido", "indiferente", "emocionado"]
-  },{
-    "word": "ascensão",
-    "correct": "subida",
-    "options": ["queda", "subida", "estagnação"]
-  },
-  {
-    "word": "acepção",
-    "correct": "sentido",
-    "options": ["palavra", "sentido", "expressão"]
-  },
-  {
-    "word": "auspicioso",
-    "correct": "promissor",
-    "options": ["negativo", "promissor", "sombrio"]
-  },
-  {
-    "word": "arbitrário",
-    "correct": "injusto",
-    "options": ["justo", "racional", "injusto"]
-  },
-  {
-    "word": "aleatório",
-    "correct": "casual",
-    "options": ["sistemático", "planejado", "casual"]
-  },
-  {
-    "word": "astúcia",
-    "correct": "esperteza",
-    "options": ["loucura", "esperteza", "ignorância"]
-  },
-  {
-    "word": "afeto",
-    "correct": "carinho",
-    "options": ["ódio", "carinho", "desprezo"]
-  },
-  {
-    "word": "algoz",
-    "correct": "carrasco",
-    "options": ["vítima", "carrasco", "herói"]
-  },
-  {
-    "word": "audácia",
-    "correct": "ousadia",
-    "options": ["medo", "ousadia", "prudência"]
-  },
-  {
-    "word": "analogia",
-    "correct": "semelhança",
-    "options": ["diferença", "semelhança", "contraste"]
-  },{
-    "word": "apologia",
-    "correct": "defesa",
-    "options": ["ataque", "defesa", "acusação"]
-  },
-  {
-    "word": "ativista",
-    "correct": "militante",
-    "options": ["neutro", "militante", "passivo"]
-  },
-  {
-    "word": "alusão",
-    "correct": "referência",
-    "options": ["insulto", "esquecimento", "referência"]
-  },
-  {
-    "word": "anseio",
-    "correct": "desejo",
-    "options": ["desprezo", "repulsa", "desejo"]
-  },
-  {
-    "word": "alicerce",
-    "correct": "base",
-    "options": ["cobertura", "base", "superfície"]
-  },
-  {
-    "word": "aspecto",
-    "correct": "característica",
-    "options": ["efeito", "característica", "consequência"]
-  },
-  {
-    "word": "assim",
-    "correct": "dessa forma",
-    "options": ["antes", "dessa forma", "talvez"]
-  },
-  {
-    "word": "alegria",
-    "correct": "felicidade",
-    "options": ["tristeza", "felicidade", "raiva"]
-  },
-  {
-    "word": "alheio",
-    "correct": "estranho",
-    "options": ["próprio", "estranho", "familiar"]
-  },
-  {
-    "word": "anátema",
-    "correct": "maldição",
-    "options": ["bênção", "maldição", "elogio"]
-  },{
-    "word": "amálgama",
-    "correct": "mistura",
-    "options": ["separação", "mistura", "divisão"]
-  },
-  {
-    "word": "ademais",
-    "correct": "além disso",
-    "options": ["no entanto", "além disso", "contudo"]
-  },
-  {
-    "word": "abnegado",
-    "correct": "dedicado",
-    "options": ["egoísta", "indiferente", "dedicado"]
-  },
-  {
-    "word": "anacrônico",
-    "correct": "desatualizado",
-    "options": ["moderno", "desatualizado", "recente"]
-  },
-  {
-    "word": "analítico",
-    "correct": "lógico",
-    "options": ["confuso", "lógico", "intuitivo"]
-  },
-  {
-    "word": "aquém",
-    "correct": "inferior",
-    "options": ["superior", "igual", "inferior"]
-  },
-  {
-    "word": "afável",
-    "correct": "amável",
-    "options": ["rude", "amável", "hostil"]
-  },
-  {
-    "word": "autonomia",
-    "correct": "independência",
-    "options": ["dependência", "controle", "independência"]
-  },
-  {
-    "word": "autóctone",
-    "correct": "nativo",
-    "options": ["estrangeiro", "nativo", "forasteiro"]
-  },
-  {
-    "word": "adorno",
-    "correct": "enfeite",
-    "options": ["peso", "enfeite", "defeito"]
-  },{
-    "word": "animosidade",
-    "correct": "rancor",
-    "options": ["amizade", "rancor", "ternura"]
-  },
-  {
-    "word": "através",
-    "correct": "por meio",
-    "options": ["em frente", "por meio", "além"]
-  },
-  {
-    "word": "audaz",
-    "correct": "corajoso",
-    "options": ["covarde", "corajoso", "prudente"]
-  },
-  {
-    "word": "astuto",
-    "correct": "inteligente",
-    "options": ["ingênuo", "burro", "inteligente"]
-  },
-  {
-    "word": "aferir",
-    "correct": "avaliar",
-    "options": ["ignorar", "avaliar", "descartar"]
-  },
-  {
-    "word": "almejar",
-    "correct": "desejar",
-    "options": ["rejeitar", "esquecer", "desejar"]
-  },
-  {
-    "word": "adesão",
-    "correct": "apoio",
-    "options": ["oposição", "apoio", "indiferença"]
-  },
-  {
-    "word": "autêntico",
-    "correct": "verdadeiro",
-    "options": ["falso", "imitado", "verdadeiro"]
-  },
-  {
-    "word": "arrogante",
-    "correct": "presunçoso",
-    "options": ["humilde", "presunçoso", "simples"]
-  },
-  {
-    "word": "antagonismo",
-    "correct": "oposição",
-    "options": ["aliança", "oposição", "união"]
-  },{
-    "word": "amizade",
-    "correct": "companheirismo",
-    "options": ["rivalidade", "companheirismo", "solidão"]
-  },
-  {
-    "word": "ação",
-    "correct": "ato",
-    "options": ["ideia", "ato", "pensamento"]
-  },
-  {
-    "word": "arcabouço",
-    "correct": "estrutura",
-    "options": ["detalhe", "estrutura", "acessório"]
-  },
-  {
-    "word": "ambíguo",
-    "correct": "incerto",
-    "options": ["claro", "incerto", "objetivo"]
-  },
-  {
-    "word": "austero",
-    "correct": "rigoroso",
-    "options": ["flexível", "rigoroso", "liberal"]
-  },
-  {
-    "word": "alcunha",
-    "correct": "apelido",
-    "options": ["título", "apelido", "sobrenome"]
-  },
-  {
-    "word": "apreço",
-    "correct": "estima",
-    "options": ["desprezo", "estima", "ódio"]
-  },
-  {
-    "word": "ambição",
-    "correct": "ganância",
-    "options": ["modéstia", "ganância", "indiferença"]
-  },
-  {
-    "word": "adjacente",
-    "correct": "vizinho",
-    "options": ["distante", "oposto", "vizinho"]
-  },
-  {
-    "word": "alteridade",
-    "correct": "diferença",
-    "options": ["igualdade", "diferença", "semelhança"]
-  },{
-    "word": "após",
-    "correct": "depois",
-    "options": ["antes", "depois", "durante"]
-  },
-  {
-    "word": "amigo",
-    "correct": "companheiro",
-    "options": ["inimigo", "companheiro", "desconhecido"]
-  },
-  {
-    "word": "alento",
-    "correct": "ânimo",
-    "options": ["desânimo", "ânsia", "ânimo"]
-  },
-  {
-    "word": "abstrair",
-    "correct": "ignorar",
-    "options": ["concentrar", "atentar", "ignorar"]
-  },
-  {
-    "word": "ambiguidade",
-    "correct": "duplo sentido",
-    "options": ["clareza", "duplo sentido", "precisão"]
-  },
-  {
-    "word": "aquisição",
-    "correct": "compra",
-    "options": ["venda", "compra", "doação"]
-  },
-  {
-    "word": "auferir",
-    "correct": "obter",
-    "options": ["perder", "obter", "devolver"]
-  },
-  {
-    "word": "analisar",
-    "correct": "estudar",
-    "options": ["ignorar", "estudar", "negar"]
-  },
-  {
-    "word": "anexo",
-    "correct": "ligado",
-    "options": ["separado", "solto", "ligado"]
-  },
-  {
-    "word": "ansioso",
-    "correct": "preocupado",
-    "options": ["calmo", "tranquilo", "preocupado"]
-  },{
-    "word": "ambicioso",
-    "correct": "pretensioso",
-    "options": ["modesto", "pretensioso", "humilde"]
-  },
-  {
-    "word": "alienação",
-    "correct": "isolamento",
-    "options": ["conexão", "integração", "isolamento"]
-  },
-  {
-    "word": "austeridade",
-    "correct": "rigidez",
-    "options": ["liberalidade", "rigidez", "suavidade"]
-  },
-  {
-    "word": "abster",
-    "correct": "evitar",
-    "options": ["aceitar", "buscar", "evitar"]
-  },
-  {
-    "word": "acesso",
-    "correct": "entrada",
-    "options": ["saída", "bloqueio", "entrada"]
-  },
-  {
-    "word": "altivez",
-    "correct": "orgulho",
-    "options": ["humildade", "orgulho", "timidez"]
-  },
-  {
-    "word": "arquétipo",
-    "correct": "modelo",
-    "options": ["exceção", "modelo", "anomalia"]
-  },
-  {
-    "word": "alçada",
-    "correct": "competência",
-    "options": ["fraqueza", "limite", "competência"]
-  },
-  {
-    "word": "atemporal",
-    "correct": "eterno",
-    "options": ["passageiro", "moderno", "eterno"]
-  },
-  {
-    "word": "assento",
-    "correct": "cadeira",
-    "options": ["mesa", "cadeira", "banco"]
-  },{
-    "word": "alegoria",
-    "correct": "representação",
-    "options": ["realidade", "representação", "mentira"]
-  },
-  {
-    "word": "axioma",
-    "correct": "princípio",
-    "options": ["hipótese", "princípio", "dúvida"]
-  },
-  {
-    "word": "acento",
-    "correct": "sinal gráfico",
-    "options": ["letra", "sinal gráfico", "palavra"]
-  },
-  {
-    "word": "assertiva",
-    "correct": "afirmação",
-    "options": ["dúvida", "afirmação", "pergunta"]
-  },
-  {
-    "word": "atípico",
-    "correct": "incomum",
-    "options": ["normal", "comum", "incomum"]
-  },
-  {
-    "word": "assunção",
-    "correct": "elevação",
-    "options": ["queda", "descida", "elevação"]
-  },
-  {
-    "word": "aprovisionado",
-    "correct": "abastecido",
-    "options": ["vazio", "abastecido", "faltando"]
-  },
-  {
-    "word": "atenuar",
-    "correct": "suavizar",
-    "options": ["agravar", "acentuar", "suavizar"]
-  },
-  {
-    "word": "auge",
-    "correct": "pico",
-    "options": ["fundo", "pico", "base"]
-  },
-  {
-    "word": "assistir",
-    "correct": "ver",
-    "options": ["ignorar", "ver", "fechar"]
-  },{
-    "word": "arraigado",
-    "correct": "enraizado",
-    "options": ["superficial", "enraizado", "volúvel"]
-  },
-  {
-    "word": "além",
-    "correct": "para lá",
-    "options": ["para cá", "para lá", "no centro"]
-  },
-  {
-    "word": "admoestar",
-    "correct": "repreender",
-    "options": ["elogiar", "repreender", "apoiar"]
-  },
-  {
-    "word": "atitude",
-    "correct": "comportamento",
-    "options": ["indiferença", "comportamento", "inatividade"]
-  },
-  {
-    "word": "ardil",
-    "correct": "engano",
-    "options": ["honestidade", "engano", "simplicidade"]
-  },
-  {
-    "word": "afeição",
-    "correct": "carinho",
-    "options": ["desprezo", "carinho", "raiva"]
-  },
-  {
-    "word": "ausência",
-    "correct": "falta",
-    "options": ["presença", "falta", "ausência"]
-  },
-  {
-    "word": "admoestação",
-    "correct": "advertência",
-    "options": ["elogio", "advertência", "aprobamento"]
-  },
-  {
-    "word": "abominável",
-    "correct": "detestável",
-    "options": ["admirável", "detestável", "agradável"]
   }
-
-
-
 ];
         defaults.forEach(w => saveWordToDB(w));
       } else {
@@ -869,7 +390,7 @@ document.getElementById("auto-read").addEventListener("change", function() {
     const current = questions[currentIndex];
     if (!current) return endGame();
 
-    document.getElementById("word").textContent = `Qual o sinônimo de: ${current.word}`;
+    document.getElementById("word").textContent = ` ${current.word}`;
     document.getElementById("options").innerHTML = "";
     document.getElementById("result").textContent = "";
 
@@ -918,20 +439,20 @@ function readCurrentQuestion(forcedRead = false) {
   readBtn.textContent = "🔄 Lendo...";
   
   const current = questions[currentIndex];
-  const questionText = `sinônimo de: ${current.word}`;
+  const questionText = `: ${current.word}`;
   
   // Lê a pergunta
   if (window.speechSynthesis) {
     // Usando a API nativa SpeechSynthesis
     const speech = new SpeechSynthesisUtterance(questionText);
     speech.lang = 'pt-BR';
-    speech.rate = 1.5; // Velocidade da leitura da pergunta
+    speech.rate = 2.5; // Velocidade da leitura da pergunta
     
     speech.onend = function() {
       // Após ler a pergunta, espera 2 segundos e lê as opções
       setTimeout(() => {
         const options = current.options;
-        let optionsText = "opções: ";
+        let optionsText = "As opções são: ";
         
         options.forEach((option, index) => {
           if (index > 0) optionsText += ", ";
@@ -940,7 +461,7 @@ function readCurrentQuestion(forcedRead = false) {
         
         const optionsSpeech = new SpeechSynthesisUtterance(optionsText);
         optionsSpeech.lang = 'pt-BR';
-        optionsSpeech.rate = 1.5;//velocidade da leitura das opções
+        optionsSpeech.rate = 2.5;//velocidade da leitura das opções
         
         optionsSpeech.onend = function() {
           // Reativa o botão quando terminar
@@ -1189,7 +710,7 @@ function nextWord() {
     const optionsInput = document.getElementById("admin-options").value;
     const options = optionsInput.split(",").map(o => o.trim());
 
-    if (!word || !correct || options.length !== 3) {
+    if (!word || !correct || options.length > 20) {
       alert("Preencha todos os campos corretamente!");
       return;
     }
