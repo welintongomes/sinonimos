@@ -194,7 +194,7 @@ h3, h4, h5 {
 
 <div class="container">
   <h1 class="mb-4" style="text-align: center;">
-    🧠Sinônimos
+    🧠Perguntas
     <span>
       <input class="form-check-input me-2" type="checkbox" id="auto-read">
       <label class="form-check-label" for="auto-read">
@@ -283,7 +283,7 @@ h3, h4, h5 {
       </div>
     </div>
   </div>
-  <button id="read-question" class="btn btn-sm btn-info mb-2" onclick="readCurrentQuestion()">🔊 Ler pergunta</button>
+  <button id="read-question" class="btn btn-sm btn-info mb-2" onclick="readCurrentQuestion(true)">🔊 Ler pergunta</button>
 </div>
 
 <script>
@@ -312,6 +312,12 @@ h3, h4, h5 {
   document.getElementById('stat-correct').textContent = stats.correct;
   document.getElementById('stat-percentage').textContent = 
     stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) + '%' : '0%';
+});
+
+document.getElementById("auto-read").addEventListener("change", function() {
+  if (!this.checked) {
+    stopSpeaking();
+  }
 });
 
   const request = indexedDB.open("SinonimosDB", 1);
@@ -393,7 +399,7 @@ h3, h4, h5 {
   readBtn.textContent = "🔊 Ler pergunta";
   
   if (document.getElementById("auto-read") && document.getElementById("auto-read").checked) {
-    setTimeout(() => readCurrentQuestion(), 50);
+    setTimeout(() => readCurrentQuestion(false), 50);
   } else {
     // Se não for ler automaticamente, inicia o timer imediatamente
     startTimer();
@@ -411,8 +417,13 @@ function startTimer() {
     }
   }, 1000);
 }
-
-function readCurrentQuestion() {
+function isReadingEnabled() {
+  return document.getElementById("auto-read") && document.getElementById("auto-read").checked;
+}
+function readCurrentQuestion(forcedRead = false) {
+  if (!isReadingEnabled() && !forcedRead) {
+    return;
+  }
   // Desabilita o botão durante a leitura
   const readBtn = document.getElementById("read-question");
   readBtn.disabled = true;
@@ -509,13 +520,22 @@ function readCurrentQuestion() {
   const resultDiv = document.getElementById("result");
   isReading = true; // Marcar que uma leitura vai começar
 
+  // Recupera as estatísticas atuais
+  let stats = JSON.parse(localStorage.getItem('sinonimosStats')) || {
+    games: 0,
+    correct: 0,
+    total: 0
+  };
+
   if (selected === correct) {
     resultDiv.textContent = "✅ Acertou!";
     resultDiv.style.color = "green";
     score++;
     document.getElementById("sound-correct").play();
-    
-    if (window.speechSynthesis) {
+    // Atualiza as estatísticas incrementando acertos em tempo real
+    stats.correct++;
+    stats.total++;
+    if (isReadingEnabled() && window.speechSynthesis) {
       const speech = new SpeechSynthesisUtterance("Acertou!");
       speech.lang = 'pt-BR';
       speech.rate = 1.5;
@@ -524,7 +544,7 @@ function readCurrentQuestion() {
         delayTimeout = setTimeout(() => nextWord(), 1000); // Reduzido para 1 segundo após a leitura
       };
       window.speechSynthesis.speak(speech);
-    } else if (window.responsiveVoice) {
+    } else if (isReadingEnabled() && window.responsiveVoice) {
       responsiveVoice.speak("Acertou!", "Brazilian Portuguese Female", {
         onend: function() {
           isReading = false;
@@ -541,14 +561,15 @@ function readCurrentQuestion() {
     resultDiv.textContent = "⏰ Tempo!, a Resposta é: ";
     resultDiv.style.color = "orange";
     document.getElementById("sound-wrong").play();
-
+    // Atualiza apenas o total de questões
+    stats.total++;
     const respostaElemento = document.createElement("div"); // Cria um novo elemento div
     respostaElemento.textContent = correct;
     respostaElemento.style.fontSize = "2em"; // Define um tamanho de fonte maior
     respostaElemento.style.fontWeight = "bold"; // Opcional: para deixar em negrito
     resultDiv.appendChild(respostaElemento); // Adiciona o novo elemento ao resultDiv
  
-    if (window.speechSynthesis) {
+    if (isReadingEnabled() && window.speechSynthesis) {
       const speech = new SpeechSynthesisUtterance(`Tempo!, A resposta é: ${correct}`);
       speech.lang = 'pt-BR';
       speech.rate = 1.5;
@@ -557,7 +578,7 @@ function readCurrentQuestion() {
         delayTimeout = setTimeout(() => nextWord(), 1000);
       };
       window.speechSynthesis.speak(speech);
-    } else if (window.responsiveVoice) {
+    } else if (isReadingEnabled() && window.responsiveVoice) {
       responsiveVoice.speak(`Tempo!, A resposta é: ${correct}`, "Brazilian Portuguese Female", {
         onend: function() {
           isReading = false;
@@ -573,8 +594,9 @@ function readCurrentQuestion() {
     resultDiv.textContent = `❌ Errou! Resposta: ${correct}`;
     resultDiv.style.color = "red";
     document.getElementById("sound-wrong").play();
-    
-    if (window.speechSynthesis) {
+    // Atualiza apenas o total de questões
+    stats.total++;
+    if (isReadingEnabled() && window.speechSynthesis) {
       const speech = new SpeechSynthesisUtterance(`Errou! A resposta é: ${correct}`);
       speech.lang = 'pt-BR';
       speech.rate = 1.5;
@@ -583,7 +605,7 @@ function readCurrentQuestion() {
         delayTimeout = setTimeout(() => nextWord(), 1000);
       };
       window.speechSynthesis.speak(speech);
-    } else if (window.responsiveVoice) {
+    } else if (isReadingEnabled() && window.responsiveVoice) {
       responsiveVoice.speak(`Errou! A resposta é: ${correct}`, "Brazilian Portuguese Female", {
         onend: function() {
           isReading = false;
@@ -595,7 +617,13 @@ function readCurrentQuestion() {
       delayTimeout = setTimeout(() => nextWord(), 3000);
     }
   }
-
+  // Salva as estatísticas atualizadas
+  localStorage.setItem('sinonimosStats', JSON.stringify(stats));
+  
+  // Atualiza a exibição das estatísticas
+  document.getElementById('stat-correct').textContent = stats.correct;
+  document.getElementById('stat-percentage').textContent = 
+    stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) + '%' : '0%';
   document.getElementById("score").textContent = `Pontuação: ${score}/${questions.length}`;
 }
 
@@ -624,12 +652,12 @@ function nextWord() {
     document.getElementById("result").textContent = `Pontuação final: ${score}/${questions.length}`;
     document.getElementById("timer").textContent = "";
     updateStatistics(score, questions.length);
-    if (window.speechSynthesis) {
+    if (isReadingEnabled() && window.speechSynthesis) {
     const speech = new SpeechSynthesisUtterance(`Fim de jogo! Sua pontuação final é: ${score} de ${questions.length}`);
     speech.lang = 'pt-BR';
     speech.rate = 1.5;
     window.speechSynthesis.speak(speech);
-  } else if (window.responsiveVoice) {
+  } else if (isReadingEnabled() && window.responsiveVoice) {
     responsiveVoice.speak(`Fim de jogo! Sua pontuação final é: ${score} de ${questions.length}`, "Brazilian Portuguese Female");
   }
   
@@ -655,8 +683,7 @@ function nextWord() {
   
   // Atualizar estatísticas
   stats.games++;
-  stats.correct += correct;
-  stats.total += total;
+  
   
   // Salvar no localStorage
   localStorage.setItem('sinonimosStats', JSON.stringify(stats));
