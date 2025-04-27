@@ -384,26 +384,35 @@ h3, h4, h5 {
       btn.className = "btn btn-outline-primary";
       btn.textContent = option;
       btn.onclick = () => checkAnswer(option);
+      btn.disabled = false;
       document.getElementById("options").appendChild(btn);
     });
 
-    timer = setInterval(() => {
-      timeLeft--;
-      updateTimerDisplay();
-      if (timeLeft === 0) {
-        clearInterval(timer);
-        checkAnswer(null);
-      }
-    }, 1000);//altere para velocidade do timer atual 1 segundo real
     const readBtn = document.getElementById("read-question");
   readBtn.disabled = false;
   readBtn.textContent = "🔊 Ler pergunta";
+  
   if (document.getElementById("auto-read") && document.getElementById("auto-read").checked) {
-    setTimeout(() => readCurrentQuestion(), 50);//velocidade do inicio da leitura
-    }
+    setTimeout(() => readCurrentQuestion(), 50);
+  } else {
+    // Se não for ler automaticamente, inicia o timer imediatamente
+    startTimer();
   }
+}
 
-  function readCurrentQuestion() {
+function startTimer() {
+  clearInterval(timer);
+  timer = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft === 0) {
+      clearInterval(timer);
+      checkAnswer(null);
+    }
+  }, 1000);
+}
+
+function readCurrentQuestion() {
   // Desabilita o botão durante a leitura
   const readBtn = document.getElementById("read-question");
   readBtn.disabled = true;
@@ -417,7 +426,7 @@ h3, h4, h5 {
     // Usando a API nativa SpeechSynthesis
     const speech = new SpeechSynthesisUtterance(questionText);
     speech.lang = 'pt-BR';
-    speech.rate = 1.5; // Velocidade da leitura da pergunta
+    speech.rate = 2.5; // Velocidade da leitura da pergunta
     
     speech.onend = function() {
       // Após ler a pergunta, espera 2 segundos e lê as opções
@@ -432,12 +441,14 @@ h3, h4, h5 {
         
         const optionsSpeech = new SpeechSynthesisUtterance(optionsText);
         optionsSpeech.lang = 'pt-BR';
-        optionsSpeech.rate = 1.5;//velocidade da leitura das opções
+        optionsSpeech.rate = 2.5;//velocidade da leitura das opções
         
         optionsSpeech.onend = function() {
           // Reativa o botão quando terminar
           readBtn.disabled = false;
           readBtn.textContent = "🔊 Ler pergunta";
+          // INICIA O TIMER AQUI DEPOIS DE LER TUDO
+          startTimer();
         };
         
         window.speechSynthesis.speak(optionsSpeech);
@@ -463,6 +474,8 @@ h3, h4, h5 {
             onend: function() {
               readBtn.disabled = false;
               readBtn.textContent = "🔊 Ler pergunta";
+              // INICIA O TIMER AQUI DEPOIS DE LER TUDO
+              startTimer();
             }
           });
         }, 2000);//---
@@ -474,6 +487,8 @@ h3, h4, h5 {
     alert("Seu navegador não suporta leitura de texto.");
     readBtn.disabled = false;
     readBtn.textContent = "🔊 Ler pergunta";
+    // Inicia o timer mesmo sem ler
+    startTimer();
   }
 }
 
@@ -482,6 +497,11 @@ h3, h4, h5 {
   }
 
   function checkAnswer(selected) {
+    // Desabilita todos os botões de opções para evitar múltiplas escolhas
+    const optionButtons = document.getElementById("options").getElementsByTagName("button");
+    for (let i = 0; i < optionButtons.length; i++) {
+    optionButtons[i].disabled = true;
+  }
   clearInterval(timer);
   stopSpeaking();
   const current = questions[currentIndex];
