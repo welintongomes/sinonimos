@@ -208,6 +208,7 @@ h3, h4, h5 {
     <button class="btn btn-primary" onclick="startGame()">🎮 Iniciar Jogo</button>
     <!--<label for="difficulty">Dificuldade:</label>-->
     <select id="difficulty" class="ain form-select w-25 mb-3">
+      <option value="2">Estudo (2s)</option>
       <option value="15">Fácil (15s)</option>
       <option value="10">Médio (10s)</option>
       <option value="5">Difícil (5s)</option>
@@ -299,6 +300,7 @@ h3, h4, h5 {
   let difficulty = 10;
   // variavel global verifica se tem alguma leitura em andamento
   let isReading = false;
+  let isStudyMode = false;
 
   // Configurações para lazy loading
   const ITEMS_PER_PAGE = 10;
@@ -371,14 +373,15 @@ document.getElementById("auto-read").addEventListener("change", function() {
 
   function startGame() {
     difficulty = parseInt(document.getElementById("difficulty").value);
+    isStudyMode = (difficulty === 2);
     document.getElementById("game-area").style.display = "block";
     questions = [...allWords];
     shuffleArray(questions);
     score = 0;
     currentIndex = 0;
-    document.getElementById("score").textContent = "";
+    document.getElementById("score").textContent = isStudyMode ? "Modo Estudo" : "";
     loadWord();
-  }
+}
 
   function loadWord() {
     clearInterval(timer);
@@ -539,11 +542,13 @@ function readCurrentQuestion(forcedRead = false) {
   if (selected === correct) {
     resultDiv.textContent = "✅ Acertou!";
     resultDiv.style.color = "green";
-    score++;
-    document.getElementById("sound-correct").play();
-    // Atualiza as estatísticas incrementando acertos em tempo real
-    stats.correct++;
-    stats.total++;
+        // Só incrementa o score se não estiver em modo estudo
+        if (!isStudyMode) {
+      score++;
+      // Atualiza as estatísticas incrementando acertos em tempo real
+      stats.correct++;
+      stats.total++;
+    }
     if (isReadingEnabled() && window.speechSynthesis) {
       const speech = new SpeechSynthesisUtterance("Acertou!");
       speech.lang = 'pt-BR';
@@ -570,8 +575,12 @@ function readCurrentQuestion(forcedRead = false) {
     resultDiv.textContent = "⏰ Tempo!, a Resposta é: ";
     resultDiv.style.color = "orange";
     document.getElementById("sound-wrong").play();
-    // Atualiza apenas o total de questões
-    stats.total++;
+        // Atualiza apenas o total de questões
+        // Só incrementa estatísticas se não estiver em modo estudo
+        if (!isStudyMode) {
+        // Atualiza apenas o total de questões
+      stats.total++;
+    }
     const respostaElemento = document.createElement("div"); // Cria um novo elemento div
     respostaElemento.textContent = correct;
     respostaElemento.style.fontSize = "2em"; // Define um tamanho de fonte maior
@@ -604,7 +613,11 @@ function readCurrentQuestion(forcedRead = false) {
     resultDiv.style.color = "red";
     document.getElementById("sound-wrong").play();
     // Atualiza apenas o total de questões
-    stats.total++;
+    // Só incrementa estatísticas se não estiver em modo estudo
+    if (!isStudyMode) {
+      // Atualiza apenas o total de questões
+      stats.total++;
+    }
     if (isReadingEnabled() && window.speechSynthesis) {
       const speech = new SpeechSynthesisUtterance(`Errou! A resposta é: ${correct}`);
       speech.lang = 'pt-BR';
@@ -627,15 +640,20 @@ function readCurrentQuestion(forcedRead = false) {
     }
   }
   // Salva as estatísticas atualizadas
-  localStorage.setItem('sinonimosStats', JSON.stringify(stats));
+  if (!isStudyMode) {
+    localStorage.setItem('sinonimosStats', JSON.stringify(stats));
+    
+    // Atualiza a exibição das estatísticas
+    document.getElementById('stat-correct').textContent = stats.correct;
+    document.getElementById('stat-percentage').textContent = 
+      stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) + '%' : '0%';
+  }
   
-  // Atualiza a exibição das estatísticas
-  document.getElementById('stat-correct').textContent = stats.correct;
-  document.getElementById('stat-percentage').textContent = 
-    stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) + '%' : '0%';
-  document.getElementById("score").textContent = `Pontuação: ${score}/${questions.length}`;
+  // Mostra pontuação ou "Modo Estudo" dependendo do modo
+  document.getElementById("score").textContent = isStudyMode ? 
+    "Modo Estudo" : 
+    `Pontuação: ${score}/${questions.length}`;
 }
-
 function nextWord() {
   clearTimeout(delayTimeout);
   
@@ -654,24 +672,41 @@ function nextWord() {
   }
 }
 
-  function endGame() {
-    stopSpeaking();//interrompe a leitura
-    document.getElementById("word").textContent = "🏁 Fim de jogo!";
-    document.getElementById("options").innerHTML = "";
+function endGame() {
+  stopSpeaking();//interrompe a leitura
+  document.getElementById("word").textContent = "🏁 Fim de jogo!";
+  document.getElementById("options").innerHTML = "";
+  
+  // Mostra mensagem diferente dependendo do modo
+  if (isStudyMode) {
+    document.getElementById("result").textContent = "Modo estudo finalizado!";
+  } else {
     document.getElementById("result").textContent = `Pontuação final: ${score}/${questions.length}`;
-    document.getElementById("timer").textContent = "";
+    // Só atualiza estatísticas se não estiver em modo estudo
     updateStatistics(score, questions.length);
-    if (isReadingEnabled() && window.speechSynthesis) {
-    const speech = new SpeechSynthesisUtterance(`Fim de jogo! Sua pontuação final é: ${score} de ${questions.length}`);
+  }
+  
+  document.getElementById("timer").textContent = "";
+  
+  if (isReadingEnabled() && window.speechSynthesis) {
+    const message = isStudyMode ? 
+      "Fim do modo estudo!" : 
+      `Fim de jogo! Sua pontuação final é: ${score} de ${questions.length}`;
+      
+    const speech = new SpeechSynthesisUtterance(message);
     speech.lang = 'pt-BR';
     speech.rate = 1.5;
     window.speechSynthesis.speak(speech);
   } else if (isReadingEnabled() && window.responsiveVoice) {
-    responsiveVoice.speak(`Fim de jogo! Sua pontuação final é: ${score} de ${questions.length}`, "Brazilian Portuguese Female");
+    const message = isStudyMode ? 
+      "Fim do modo estudo!" : 
+      `Fim de jogo! Sua pontuação final é: ${score} de ${questions.length}`;
+      
+    responsiveVoice.speak(message, "Brazilian Portuguese Female");
   }
   
   document.getElementById("sound-gameover").play(); // som de fim de jogo
-  }
+}
 
   //configuraçao para interromper a leitura
   function stopSpeaking() {
